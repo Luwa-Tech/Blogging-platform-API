@@ -1,7 +1,11 @@
+import dotenv from "dotenv";
 import express, { Response, Request } from 'express';
 import "reflect-metadata";
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import dataSource from "./config/data-source";
+
+dotenv.config();
 
 const server = express();
 const PORT = 3000;
@@ -15,6 +19,17 @@ server.use('/', (req: Request, res: Response): void => {
     res.send('Hello, world')
 })
 
-server.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`)
-})
+// Init db source
+dataSource.initialize()
+    .then(() => {
+        console.log('Connected to Database successfully.')
+        server.listen(PORT, () => {
+            console.log(`Server listening on port ${PORT}`)
+        })
+    })
+    .catch((error) => console.log(error))
+
+// TODO
+// 1. Create and setup DB connection
+// 2. Create DB entites and relationships
+// 3. Implement API endpoints and tests
