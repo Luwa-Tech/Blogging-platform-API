@@ -1,11 +1,9 @@
-import dotenv from "dotenv";
+import 'dotenv/config'
 import express, { Response, Request } from 'express';
 import "reflect-metadata";
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dataSource from "./config/data-source";
-
-dotenv.config();
 
 const server = express();
 const PORT = 3000;
@@ -27,7 +25,7 @@ dataSource.initialize()
             console.log(`Server listening on port ${PORT}`)
         })
     })
-    .catch((error) => console.log(error))
+    .catch((error: Error) => console.log(error))
 
 // TODO
 // 1. Create and setup DB connection
