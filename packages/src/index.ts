@@ -30,4 +30,5 @@ dataSource.initialize()
 // TODO
 // 1. Create and setup DB connection
 // 2. Create DB entites and relationships
-// 3. Implement API endpoints and tests
+// 3. Implement API endpoints
+// 4. Implement unit tests
