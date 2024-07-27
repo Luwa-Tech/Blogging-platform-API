@@ -9,6 +9,9 @@ const dataSource = new DataSource({
     username: dbUsername,
     password: dbPassword,
     database: dbName,
+    entities: ['build/entity/*.js'],
+    synchronize: true,
+    logging: ["query", "error"]
 });
 
 export default dataSource;
