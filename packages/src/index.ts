@@ -4,6 +4,7 @@ import "reflect-metadata";
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dataSource from "./config/data-source";
+import { logger } from './log/logger';
 
 const server = express();
 const PORT = 3000;
@@ -20,12 +21,12 @@ server.use('/', (req: Request, res: Response): void => {
 // Init db source
 dataSource.initialize()
     .then(() => {
-        console.log('Connected to Database successfully.')
+        logger.info('Connected to Database successfully.')
         server.listen(PORT, () => {
-            console.log(`Server listening on port ${PORT}`)
+            logger.info(`Server listening on port ${PORT}`)
         })
     })
-    .catch((error: Error) => console.log(error))
+    .catch((error: Error) => logger.error(error.message))
 
 // TODO
 // 1. Create and setup DB connection

@@ -11,7 +11,7 @@ const dataSource = new DataSource({
     database: dbName,
     entities: ['build/entity/*.js'],
     synchronize: true,
-    logging: ["query", "error"]
+    logging: ['info', 'error']
 });
 
 export default dataSource;
