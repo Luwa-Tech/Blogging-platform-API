@@ -29,6 +29,7 @@ dataSource.initialize()
     .catch((error: Error) => logger.error(error.message))
 
 // TODO
+// FIX: DB null values
 // 1. Create and setup DB connection
 // 2. Create DB entites and relationships
 // 3. Implement API endpoints
