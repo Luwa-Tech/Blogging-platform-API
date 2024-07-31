@@ -1,5 +1,5 @@
 import { Entity, Column, ManyToOne, JoinTable, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
-import { Author } from './author-entity';
+import { User } from './author-entity';
 import { Tag } from './tag-entity';
 import { Status } from './status-entity';
 
@@ -17,8 +17,8 @@ export class Article {
     @Column()
     date_created: Date
 
-    @ManyToOne(() => Author, (author) => author.article)
-    author: Author;
+    @ManyToOne(() => User, (user) => user.article)
+    user: User;
 
     @ManyToOne(() => Status, (status) => status.article)
     status: Status;
