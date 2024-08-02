@@ -8,6 +8,7 @@ export interface UserInt {
     firstname: string
     lastname: string
     email: string
+    password: string
 }
 
 export class UserService {
@@ -18,10 +19,10 @@ export class UserService {
     }
 
 
-    public getUser = async (id: number): Promise<User | null> => {
+    public getUser = async (email: string): Promise<User | null> => {
         try {
             const findUser = await this.userRepo.findOneBy({
-                id: id
+                email: email
             });
     
             if (findUser) {

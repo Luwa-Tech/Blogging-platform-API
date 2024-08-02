@@ -20,19 +20,18 @@ class ArticleService {
     }
 
     public getAllArticles = async (): Promise<Article[] | null> => {
+        // const article = getArticleEntity(this.article);
+        // return await article.find();
         const articles = await dataSource.getRepository(this.article).find();
         return articles;
     }
 
-    public createArticle = async (articleInfo: ArticleInterface): Promise<Article> => {
+    //public createArticle = async (articleInfo: ArticleInterface): Promise<Article> => {
         // get article repository
-        const article = await dataSource.getRepository(this.article).create(articleInfo);
-        const result = await dataSource.getRepository(this.article).save(article);
-        return result;
         // create new article
         // save article and return results
         // question: does article return all results or just added result
-    }
+   // }
         
     public deleteArticle = async (articleID: number): Promise<void> => {
         // Get article repository

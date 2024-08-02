@@ -6,14 +6,17 @@ export class User {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column()
+    @Column({nullable: false})
     firstname: string
 
-    @Column()
+    @Column({nullable: false})
     lastname: string
 
-    @Column()
+    @Column({nullable: false})
     email: string
+
+    @Column({nullable: false})
+    password: string
 
     @OneToMany(() => Article, (article) => article.user)
     article: Article[];
