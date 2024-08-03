@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinTable, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinTable, PrimaryGeneratedColumn, ManyToMany, CreateDateColumn } from 'typeorm';
 import { User } from './author-entity';
 import { Tag } from './tag-entity';
 import { Status } from './status-entity';
@@ -8,17 +8,17 @@ export class Article {
     @PrimaryGeneratedColumn()
     id: number
 
+    @ManyToOne(() => User, (user) => user.article)
+    user: User;
+
     @Column()
     title: string
 
     @Column({type: 'text'})
     content: string
 
-    @Column()
-    date_created: Date
-
-    @ManyToOne(() => User, (user) => user.article)
-    user: User;
+    @CreateDateColumn()
+    createdAt: Date
 
     @ManyToOne(() => Status, (status) => status.article)
     status: Status;
