@@ -2,16 +2,22 @@ import { Entity, Column, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Article } from './article-entity';
 
 @Entity()
-export class Author {
+export class User {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column()
-    name: string
+    @Column({nullable: false})
+    firstname: string
 
-    @Column()
+    @Column({nullable: false})
+    lastname: string
+
+    @Column({nullable: false})
     email: string
 
-    @OneToMany(() => Article, (article) => article.author)
-    article?: Article[];
+    @Column({nullable: false})
+    password: string
+
+    @OneToMany(() => Article, (article) => article.user)
+    article: Article[];
 };
