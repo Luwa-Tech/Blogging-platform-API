@@ -1,14 +1,10 @@
-import { Entity, Column, PrimaryColumn, ManyToMany } from 'typeorm';
-import { Article } from './article-entity';
+import { Entity, Column, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Tag {
-    @PrimaryColumn({type: 'uuid', generated: 'uuid'})
-    id: string
+    @PrimaryGeneratedColumn()
+    id: number
 
     @Column()
     name: string
-
-    @ManyToMany(() => Article, (article) => article.tags)
-    articles: Article[]
 };

@@ -1,12 +1,12 @@
-import { Entity, Column, ManyToOne, PrimaryColumn, JoinTable, ManyToMany } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinTable, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
 import { Author } from './author-entity';
 import { Tag } from './tag-entity';
 import { Status } from './status-entity';
 
 @Entity()
 export class Article {
-    @PrimaryColumn({type: 'uuid', generated: 'uuid'})
-    id: string
+    @PrimaryGeneratedColumn()
+    id: number
 
     @Column()
     title: string
@@ -23,7 +23,7 @@ export class Article {
     @ManyToOne(() => Status, (status) => status.article)
     status: Status;
 
-    @ManyToMany(() => Tag, (tag) => tag.articles, { cascade: true})
+    @ManyToMany(() => Tag, { cascade: true})
     @JoinTable({name: 'article_tags'})
     tags: Tag[]
 };
