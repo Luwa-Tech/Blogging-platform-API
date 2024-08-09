@@ -3,15 +3,12 @@ import dataSource from "../config/data-source";
 import { Status } from "../entity/status-entity";
 import { User } from "../entity/author-entity";
 import { Tag } from "../entity/tag-entity";
-import { Repository } from "typeorm";
+import { DeepPartial, Repository } from "typeorm";
 import { logger } from "../log/logger";
 
 export interface ArticleInt {
-    user: User
     title: string
     content: string
-    date_created: Date
-    status: Status
     tags: Tag[]
 }
 
@@ -19,10 +16,12 @@ class ArticleService {
     private articleRepo: Repository<Article>;
     private userRepo: Repository<User>;
     private statusRepo: Repository<Status>;
+    private tagRepo: Repository<Tag>;
     constructor() {
         this.articleRepo = dataSource.getRepository(Article);
         this.userRepo = dataSource.getRepository(User);
         this.statusRepo = dataSource.getRepository(Status);
+        this.tagRepo = dataSource.getRepository(Tag);
     }
 
     public getAllArticles = async (): Promise<Article[] | null> => {
@@ -37,11 +36,7 @@ class ArticleService {
         }
     }
 
-    public createArticle = async (articleInfo: ArticleInt, userId: number): Promise<Article | null> => {
-        const user = await this.userRepo.findOneBy({
-            id: userId
-        });
-
+    public createArticle = async (articleInfo: ArticleInt, user: User): Promise<Article | null> => {
         const defaultStatus = await this.statusRepo.findOneBy({name: 'draft'});
 
         if (!user || !defaultStatus) {
@@ -49,13 +44,12 @@ class ArticleService {
             return null;
         }
 
-        const article = this.articleRepo.create({
-            ...articleInfo,
-            user,
-            status: defaultStatus
-        });
+        const article = this.articleRepo.create(articleInfo);
+        article.user = user;
+        article.status = defaultStatus;
 
-        return await this.articleRepo.save(article);
+        const result = await this.articleRepo.save(article);
+        return result;
     }
 
     public deleteArticle = async (articleId: number, userId: number): Promise<void> => {
@@ -71,17 +65,19 @@ class ArticleService {
         await this.articleRepo.delete(article);
     }
 
-    public updateArticle = async (articleId: number, userId: number, updatedInfo: ArticleInt): Promise<void> => {
+    public updateArticle = async (articleId: number, updatedInfo: ArticleInt): Promise<Article> => {
         const article = await this.articleRepo.findOne({
-            where: { id: articleId, user: { id: userId } },
-            relations: ['user', 'status', 'tags']
+            where: { id: articleId},
+            relations: ['tags']
         });
 
         if(!article) {
             throw new Error('Article not found');
         }
-        this.articleRepo.merge(article, updatedInfo);
-        await this.articleRepo.save(article);
+        const tags = await this.findTags(updatedInfo.tags);
+
+        this.articleRepo.merge(article, updatedInfo, {tags});
+        return await this.articleRepo.save(article);
     }
 
     public getArticleByID = async (articleId: number): Promise<Article | null> => {
@@ -107,8 +103,22 @@ class ArticleService {
             return userArticles;
         } catch (error) {
             logger.error('Could not fetch user articles: ', error);
-            return null
+            return null;
         }
+    }
+
+    private findTags = async (tags: Tag[]): Promise<Tag[]> => {
+        let articleTags: Tag[] = [];
+
+        for (let tagName of tags) {
+            const findTag = await this.tagRepo.findOne({where: {name: tagName.name}});
+
+            if (findTag) {
+                articleTags.push(findTag);
+            }
+        };
+
+        return articleTags;
     }
 
     // TODO:
