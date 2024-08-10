@@ -3,7 +3,7 @@ import dataSource from "../config/data-source";
 import { Status } from "../entity/status-entity";
 import { User } from "../entity/author-entity";
 import { Tag } from "../entity/tag-entity";
-import { DeepPartial, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { logger } from "../log/logger";
 
 export interface ArticleInt {
@@ -37,7 +37,7 @@ class ArticleService {
     }
 
     public createArticle = async (articleInfo: ArticleInt, user: User): Promise<Article | null> => {
-        const defaultStatus = await this.statusRepo.findOneBy({name: 'draft'});
+        const defaultStatus = await this.statusRepo.findOneBy({ name: 'draft' });
 
         if (!user || !defaultStatus) {
             // Write better error handling
@@ -52,31 +52,31 @@ class ArticleService {
         return result;
     }
 
-    public deleteArticle = async (articleId: number, userId: number): Promise<void> => {
+    public deleteArticle = async (articleId: number, userId: number): Promise<void | null> => {
         const article = await this.articleRepo.findOne({
             where: { id: articleId, user: { id: userId } },
             relations: ['user']
         })
 
-        if(!article) {
-            throw new Error('Article not found');
+        if (article) {
+            await this.articleRepo.delete(article);
+        } else {
+            return null;
         }
-
-        await this.articleRepo.delete(article);
     }
 
     public updateArticle = async (articleId: number, updatedInfo: ArticleInt): Promise<Article> => {
         const article = await this.articleRepo.findOne({
-            where: { id: articleId},
+            where: { id: articleId },
             relations: ['tags']
         });
 
-        if(!article) {
+        if (!article) {
             throw new Error('Article not found');
         }
         const tags = await this.findTags(updatedInfo.tags);
 
-        this.articleRepo.merge(article, updatedInfo, {tags});
+        this.articleRepo.merge(article, updatedInfo, { tags });
         return await this.articleRepo.save(article);
     }
 
@@ -96,10 +96,10 @@ class ArticleService {
     public getAllUserArticles = async (userId: number): Promise<Article[] | null> => {
         try {
             const userArticles = await this.articleRepo.find({
-                where: {user: {id: userId}},
+                where: { user: { id: userId } },
                 relations: ['user', 'status', 'tags']
             });
-    
+
             return userArticles;
         } catch (error) {
             logger.error('Could not fetch user articles: ', error);
@@ -107,11 +107,12 @@ class ArticleService {
         }
     }
 
-    private findTags = async (tags: Tag[]): Promise<Tag[]> => {
+    // Change tags type if error occurs
+    private findTags = async (tags: any[]): Promise<Tag[]> => {
         let articleTags: Tag[] = [];
 
         for (let tagName of tags) {
-            const findTag = await this.tagRepo.findOne({where: {name: tagName.name}});
+            const findTag = await this.tagRepo.findOne({ where: { name: tagName } });
 
             if (findTag) {
                 articleTags.push(findTag);
@@ -123,6 +124,8 @@ class ArticleService {
 
     // TODO:
     // 1. users should be able to filter by tags, status, or date
+    // 2. publish
+    // 3. archive
 }
 
 
