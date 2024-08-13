@@ -13,7 +13,7 @@ class ArticleController {
         this.userService = userService;
     }
 
-    public create = async (req: Request, res: Response): Promise<void> => {
+     public create = async (req: Request, res: Response): Promise<void> => {
         logger.http(`Incoming POST request at ${req.path}`);
         const articleInfo = req.body;
         const user = req?.user;
