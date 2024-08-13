@@ -6,19 +6,20 @@ import { accessKey } from "../env-variables";
 const authoriseUser = async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.access_token;
     if (!token) {
-        logger.warn('Unauthorized user login request');
+        logger.warn('Unauthorized user request');
         return res.status(403).json({"message": "User unauthorized"});
     }
 
     try {
         if (accessKey) {
             const data = jwt.verify(token, accessKey);
-            req.user = data;
+            // Adjust if error occurs
+            req.user = data as jwt.JwtPayload;
             logger.info('User cookie verified successfully')
             return next();
         }
     } catch (err) {
-        logger.error('Unauthorized user login request', err);
+        logger.error('Unauthorized user request', err);
         return res.sendStatus(403);
     }
 }

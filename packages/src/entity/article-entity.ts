@@ -20,10 +20,10 @@ export class Article {
     @CreateDateColumn()
     createdAt: Date
 
-    @ManyToOne(() => Status, (status) => status.article)
-    status: Status;
+    @ManyToOne(() => Status, (status) => status.article,)
+    status: Status
 
-    @ManyToMany(() => Tag, { cascade: true})
+    @ManyToMany(() => Tag)
     @JoinTable({name: 'article_tags'})
     tags: Tag[]
 };

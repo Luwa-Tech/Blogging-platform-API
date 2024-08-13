@@ -10,5 +10,5 @@ export class Status {
     name: string
 
     @OneToMany(() => Article, (article) => article.status)
-    article?: Article[];
+    article: Article[];
 };

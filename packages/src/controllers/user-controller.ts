@@ -6,7 +6,7 @@ import { logger } from "../log/logger";
 import { UserService } from "../service/user-service";
 import { accessKey, nodeEnv } from "../env-variables";
 
-class UserHandler {
+class UserController {
     private userService: UserService;
     constructor (userService: UserService) {
         this.userService = userService;
@@ -87,4 +87,4 @@ class UserHandler {
 }
 
 
-export default UserHandler;
+export default UserController;

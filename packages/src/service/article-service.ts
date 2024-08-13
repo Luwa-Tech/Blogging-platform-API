@@ -7,11 +7,8 @@ import { Repository } from "typeorm";
 import { logger } from "../log/logger";
 
 export interface ArticleInt {
-    user: User
     title: string
     content: string
-    date_created: Date
-    status: Status
     tags: Tag[]
 }
 
@@ -19,10 +16,12 @@ class ArticleService {
     private articleRepo: Repository<Article>;
     private userRepo: Repository<User>;
     private statusRepo: Repository<Status>;
+    private tagRepo: Repository<Tag>;
     constructor() {
         this.articleRepo = dataSource.getRepository(Article);
         this.userRepo = dataSource.getRepository(User);
         this.statusRepo = dataSource.getRepository(Status);
+        this.tagRepo = dataSource.getRepository(Tag);
     }
 
     public getAllArticles = async (): Promise<Article[] | null> => {
@@ -37,51 +36,48 @@ class ArticleService {
         }
     }
 
-    public createArticle = async (articleInfo: ArticleInt, userId: number): Promise<Article | null> => {
-        const user = await this.userRepo.findOneBy({
-            id: userId
-        });
-
-        const defaultStatus = await this.statusRepo.findOneBy({name: 'draft'});
+    public createArticle = async (articleInfo: ArticleInt, user: User): Promise<Article | null> => {
+        const defaultStatus = await this.statusRepo.findOneBy({ name: 'draft' });
 
         if (!user || !defaultStatus) {
             // Write better error handling
             return null;
         }
 
-        const article = this.articleRepo.create({
-            ...articleInfo,
-            user,
-            status: defaultStatus
-        });
+        const article = this.articleRepo.create(articleInfo);
+        article.user = user;
+        article.status = defaultStatus;
 
-        return await this.articleRepo.save(article);
+        const result = await this.articleRepo.save(article);
+        return result;
     }
 
-    public deleteArticle = async (articleId: number, userId: number): Promise<void> => {
+    public deleteArticle = async (articleId: number, userId: number): Promise<void | null> => {
         const article = await this.articleRepo.findOne({
             where: { id: articleId, user: { id: userId } },
             relations: ['user']
         })
 
-        if(!article) {
-            throw new Error('Article not found');
+        if (article) {
+            await this.articleRepo.delete(article);
+        } else {
+            return null;
         }
-
-        await this.articleRepo.delete(article);
     }
 
-    public updateArticle = async (articleId: number, userId: number, updatedInfo: ArticleInt): Promise<void> => {
+    public updateArticle = async (articleId: number, updatedInfo: ArticleInt): Promise<Article> => {
         const article = await this.articleRepo.findOne({
-            where: { id: articleId, user: { id: userId } },
-            relations: ['user', 'status', 'tags']
+            where: { id: articleId },
+            relations: ['tags']
         });
 
-        if(!article) {
+        if (!article) {
             throw new Error('Article not found');
         }
-        this.articleRepo.merge(article, updatedInfo);
-        await this.articleRepo.save(article);
+        const tags = await this.findTags(updatedInfo.tags);
+
+        this.articleRepo.merge(article, updatedInfo, { tags });
+        return await this.articleRepo.save(article);
     }
 
     public getArticleByID = async (articleId: number): Promise<Article | null> => {
@@ -100,19 +96,36 @@ class ArticleService {
     public getAllUserArticles = async (userId: number): Promise<Article[] | null> => {
         try {
             const userArticles = await this.articleRepo.find({
-                where: {user: {id: userId}},
+                where: { user: { id: userId } },
                 relations: ['user', 'status', 'tags']
             });
-    
+
             return userArticles;
         } catch (error) {
             logger.error('Could not fetch user articles: ', error);
-            return null
+            return null;
         }
+    }
+
+    // Change tags type if error occurs
+    private findTags = async (tags: any[]): Promise<Tag[]> => {
+        let articleTags: Tag[] = [];
+
+        for (let tagName of tags) {
+            const findTag = await this.tagRepo.findOne({ where: { name: tagName } });
+
+            if (findTag) {
+                articleTags.push(findTag);
+            }
+        };
+
+        return articleTags;
     }
 
     // TODO:
     // 1. users should be able to filter by tags, status, or date
+    // 2. publish
+    // 3. archive
 }
 
 
