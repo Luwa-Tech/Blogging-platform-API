@@ -18,10 +18,10 @@ export class UserService {
         this.userRepo = dataSource.getRepository(User);
     }
 
-    public getUser = async (userId: number): Promise<User | null> => {
+    public getUser = async (userEmail: string): Promise<User | null> => {
         try {
             const findUser = await this.userRepo.findOneBy({
-                id: userId
+                email: userEmail
             });
     
             if (findUser) {

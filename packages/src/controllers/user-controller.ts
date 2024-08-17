@@ -47,6 +47,7 @@ class UserController {
         const data = matchedData(req);
 
         const findUser = await this.userService.getUser(data.email);
+        
         if (!findUser) {
             logger.warn(`Login attempt failed: Email ${data.email} does not exist`);
             res.status(400).json({ "message": "User does not exist" });
