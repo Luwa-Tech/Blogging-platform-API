@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import express, { Response, Request } from 'express';
+import express from 'express';
 import 'reflect-metadata';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -19,7 +19,6 @@ server.use(express.json());
 server.use('/api/v1/user', userRoute);
 server.use('api/v1/article', articleRoute);
 
-// Init db source
 dataSource.initialize()
     .then(() => {
         logger.info('Connected to Database successfully.')
