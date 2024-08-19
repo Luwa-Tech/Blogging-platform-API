@@ -10,7 +10,7 @@ const userService = new UserService();
 const articleService = new ArticleService();
 const articleController = new ArticleController(articleService, userService);
 
-router.post('/create', authoriseUser, articleController.create)
+router.post('/create', articleController.create)
 router.delete('/remove', authoriseUser, articleController.delete)
 router.put('/save', authoriseUser, articleController.update)
 router.get('/:id', authoriseUser, articleController.getOne)

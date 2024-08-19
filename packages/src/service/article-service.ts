@@ -39,7 +39,7 @@ class ArticleService {
     public createArticle = async (articleInfo: ArticleInt, user: User): Promise<Article | null> => {
         const defaultStatus = await this.statusRepo.findOneBy({ name: 'draft' });
 
-        if (!user || !defaultStatus) {
+        if (!defaultStatus) {
             // Write better error handling
             return null;
         }

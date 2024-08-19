@@ -11,10 +11,10 @@ export class Article {
     @ManyToOne(() => User, (user) => user.article)
     user: User;
 
-    @Column()
+    @Column({nullable: true})
     title: string
 
-    @Column({type: 'text'})
+    @Column({type: 'text', nullable: true})
     content: string
 
     @CreateDateColumn()
@@ -25,5 +25,5 @@ export class Article {
 
     @ManyToMany(() => Tag)
     @JoinTable({name: 'article_tags'})
-    tags: Tag[]
+    tags?: Tag[]
 };
