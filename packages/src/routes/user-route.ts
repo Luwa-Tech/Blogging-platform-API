@@ -11,8 +11,8 @@ const router = express.Router();
 const userService = new UserService();
 const userController = new UserController(userService);
 
-router.post("/register", validateRequestBody(validateNewUser), userController.registerNewUser)
-router.post("/login", validateRequestBody(validateUserLogin), userController.loginUser)
-router.get("/logout", userController.logoutUser)
+router.post('/register', validateRequestBody(validateNewUser), userController.registerNewUser)
+router.post('/login', validateRequestBody(validateUserLogin), userController.loginUser)
+router.get('/logout', userController.logoutUser)
 
 export default router;

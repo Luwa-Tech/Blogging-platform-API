@@ -35,6 +35,23 @@ export class UserService {
         }
     }
 
+    public getUserById = async (userId: number): Promise<User | null> => {
+        try {
+            const findUser = await this.userRepo.findOneBy({
+                id: userId
+            });
+    
+            if (findUser) {
+                return findUser;
+            } else {
+                return null;
+            }
+        } catch (error) {
+            logger.error('Error getting user:', error);
+            return null;
+        }
+    }
+
     public createUser = async (userInfo: UserInt): Promise<User | null> => {
         try {
             const newUser = this.userRepo.create(userInfo);

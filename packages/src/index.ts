@@ -17,7 +17,7 @@ server.use(express.static('public'));
 server.use(express.json());
 
 server.use('/api/v1/user', userRoute);
-server.use('api/v1/article', articleRoute);
+server.use('/api/v1/article', articleRoute);
 
 dataSource.initialize()
     .then(() => {

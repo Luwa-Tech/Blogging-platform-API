@@ -15,10 +15,11 @@ class ArticleController {
 
      public create = async (req: Request, res: Response): Promise<void> => {
         logger.http(`Incoming POST request at ${req.path}`);
-        const articleInfo = req.body;
+        // const articleInfo = req.body;
         const user = req?.user;
+        console.log(user)
 
-        const findUser = await this.userService.getUser(user?.id);
+        const findUser = await this.userService.getUserById(parseInt(user?.id));
         if (!findUser) {
             logger.warn('User is not found');
             res.status(400).json({ 'message': 'User does not exist' });
@@ -26,7 +27,7 @@ class ArticleController {
         };
 
         try {
-            const result = await this.articleService.createArticle(articleInfo, findUser);
+            const result = await this.articleService.createArticle(findUser);
 
             logger.info('New article created successfully');
             res.status(201).json({'message': 'New article created', result});

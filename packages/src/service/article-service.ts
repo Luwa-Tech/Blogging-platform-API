@@ -36,7 +36,12 @@ class ArticleService {
         }
     }
 
-    public createArticle = async (articleInfo: ArticleInt, user: User): Promise<Article | null> => {
+    public createArticle = async (user: User): Promise<Article | null> => {
+        const newArticle: ArticleInt = {
+            title: '',
+            content: '',
+            tags: []
+        }
         const defaultStatus = await this.statusRepo.findOneBy({ name: 'draft' });
 
         if (!defaultStatus) {
@@ -44,7 +49,7 @@ class ArticleService {
             return null;
         }
 
-        const article = this.articleRepo.create(articleInfo);
+        const article = this.articleRepo.create(newArticle);
         article.user = user;
         article.status = defaultStatus;
 
