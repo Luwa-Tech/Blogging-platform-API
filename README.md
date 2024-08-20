@@ -17,11 +17,15 @@ This project is a blog API built with TypeScript, Express, and TypeORM, designed
   ## Setup
   1. Clone the Repository:
      
-     `https://github.com/Luwa-Tech/Blogging-platform-API`
-  2. Install Dependencies:
+     ```
+     https://github.com/Luwa-Tech/Blogging-platform-API.git
+     ```
+  3. Install Dependencies:
      
-     `npm install`
-  3. Setup Environment Variables:
+     ```
+     npm install
+     ```
+  5. Setup Environment Variables:
       Create a .env file in the root directory and add the following:
      
        ```
@@ -34,10 +38,12 @@ This project is a blog API built with TypeScript, Express, and TypeORM, designed
        NODE_ENV=development
        ```
 
-  4. Start the Server:
+  6. Start the Server:
      
-     `npm run start`
+     ```
+     npm run start
+     ```
 
-  6. Testing:
+  8. Testing:
       - Use Postman or Thunder Client to test the endpoints.
       - Ensure the MySQL server is running on your local machine.
